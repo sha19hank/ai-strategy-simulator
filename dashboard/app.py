@@ -6,6 +6,11 @@ st.title("AI-Powered Strategy Simulator")
 st.subheader("Version 1 – Dashboard")
 
 st.sidebar.header("Controls")
-st.sidebar.write("Controls will be added here")
+
+num_firms = st.sidebar.slider("Number of Firms", 2, 6, 3)
+num_steps = st.sidebar.slider("Simulation Steps", 50, 300, 100)
+base_demand = st.sidebar.number_input("Base Market Demand", 500, 5000, 1000)
+
 
 st.write("Dashboard setup complete.")
+

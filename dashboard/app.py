@@ -54,9 +54,15 @@ if run_simulation:
 
     st.success("Simulation completed successfully!")
 
-    st.write("Data collected:")
-    st.write("• Prices")
-    st.write("• Profits")
-    st.write("• Market Shares")
+    # --------- PLOTS ---------
+    st.subheader("Prices Over Time")
+    st.line_chart(price_df)
+
+    st.subheader("Profit Over Time")
+    st.line_chart(profit_df)
+
+    st.subheader("Market Share Over Time")
+    st.line_chart(share_df)
+
 
 

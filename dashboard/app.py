@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import streamlit as st
 import pandas as pd
 from version1.env.market_env import MarketEnv
@@ -54,36 +59,57 @@ if run_simulation:
 
     st.success("Simulation completed successfully!")
 
-    # --------- CHARTS ---------
-    st.subheader("📈 Market Dynamics")
+    # ================= VISUAL DASHBOARD =================
+    st.divider()
+    st.markdown("## 📌Market dynamic Overview ")
 
+    #=================KPI METRICS====================
+
+    col_kpi1, col_kpi2, col_kpi3 = st.columns(3)
+
+    with col_kpi1:
+        st.metric("Number of Firms", num_firms)
+
+    with col_kpi2:
+        st.metric("Simulation Steps", num_steps)
+
+    with col_kpi3:
+        st.metric("Base Demand", base_demand)
+    st.divider()
+
+    # --------- CHARTS ROW 1 ---------
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("**Prices Over Time**")
-        st.line_chart(price_df)
+        st.line_chart(price_df, height=300)
 
     with col2:
         st.markdown("**Profit Over Time**")
-        st.line_chart(profit_df)
+        st.line_chart(profit_df, height=300)
+
+    st.divider()
+
+    #--------- CHARTS ROW 2 ---------
 
     st.markdown("**Market Share Over Time**")
-    st.line_chart(share_df)
+    st.line_chart(share_df, height=300)
+
+    st.divider()
 
     
     # --------- TABLES ---------
-    st.subheader("📊 Final Values (Last Step)")
+    st.markdown("## 📋 Final Snapshot")
 
-    final_prices = price_df.iloc[-1]
-    final_profits = profit_df.iloc[-1]
-    final_shares = share_df.iloc[-1]
+    col_t1, col_t2 = st.columns(2)
 
-    summary_df = pd.DataFrame({
-        "Final Price": final_prices,
-        "Final Profit": final_profits,
-        "Final Market Share": final_shares
-    })
+    with col_t1:
+        st.markdown("### Latest Prices")
+        st.dataframe(price_df.tail(1), use_container_width=True)
 
-    st.dataframe(summary_df)
+    with col_t2:
+        st.markdown("### Latest Profits")
+        st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

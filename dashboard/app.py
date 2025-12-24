@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from version1.env.market_env import MarketEnv
 
 st.set_page_config(page_title="AI Strategy Simulator", layout="wide")
@@ -27,15 +28,35 @@ if run_simulation:
 
     obs, _ = env.reset()
 
-    st.success("Simulation started successfully!")
+    # --------- STORAGE ---------
+    price_history = []
+    profit_history = []
+    share_history = []
+
+    st.info("Simulation running...")
 
     for step in range(num_steps):
         actions = {
             agent: env.action_spaces[agent].sample()
             for agent in env.possible_agents
         }
+
         obs, rewards, term, trunc, info = env.step(actions)
 
-    st.write("Simulation finished.")
+        price_history.append(env.prices.copy())
+        profit_history.append([rewards[a] for a in env.possible_agents])
+        share_history.append(env.market_share.copy())
+
+    # --------- CONVERT TO DATAFRAMES ---------
+    price_df = pd.DataFrame(price_history, columns=env.possible_agents)
+    profit_df = pd.DataFrame(profit_history, columns=env.possible_agents)
+    share_df = pd.DataFrame(share_history, columns=env.possible_agents)
+
+    st.success("Simulation completed successfully!")
+
+    st.write("Data collected:")
+    st.write("• Prices")
+    st.write("• Profits")
+    st.write("• Market Shares")
 
 

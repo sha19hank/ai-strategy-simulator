@@ -54,15 +54,36 @@ if run_simulation:
 
     st.success("Simulation completed successfully!")
 
-    # --------- PLOTS ---------
-    st.subheader("Prices Over Time")
-    st.line_chart(price_df)
+    # --------- CHARTS ---------
+    st.subheader("📈 Market Dynamics")
 
-    st.subheader("Profit Over Time")
-    st.line_chart(profit_df)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Prices Over Time**")
+        st.line_chart(price_df)
 
-    st.subheader("Market Share Over Time")
+    with col2:
+        st.markdown("**Profit Over Time**")
+        st.line_chart(profit_df)
+
+    st.markdown("**Market Share Over Time**")
     st.line_chart(share_df)
+
+    
+    # --------- TABLES ---------
+    st.subheader("📊 Final Values (Last Step)")
+
+    final_prices = price_df.iloc[-1]
+    final_profits = profit_df.iloc[-1]
+    final_shares = share_df.iloc[-1]
+
+    summary_df = pd.DataFrame({
+        "Final Price": final_prices,
+        "Final Profit": final_profits,
+        "Final Market Share": final_shares
+    })
+
+    st.dataframe(summary_df)
 
 
 

@@ -9,8 +9,56 @@ from version1.env.market_env import MarketEnv
 
 st.set_page_config(page_title="AI Strategy Simulator", layout="wide")
 
+# ---------------- PREMIUM UI STYLING ----------------
+st.markdown("""
+<style>
+.main {
+    background-color: #0E1117;
+}
+h1, h2, h3 {
+    color: #EAEAEA;
+    font-weight: 700;
+}
+
+.section-header {
+    padding: 12px 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+[data-testid="metric-container"] {
+    background-color: #161B22;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #2A2E35;
+}
+[data-testid="stLineChart"] {
+    background-color: #161B22;
+    padding: 10px;
+    border-radius: 12px;
+}
+[data-testid="stDataFrame"] {
+    background-color: #161B22;
+    border-radius: 12px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# ---------------- TITLE ----------------
 st.title("AI-Powered Strategy Simulator")
 st.subheader("Version 1 – Virtual Market Dashboard")
+
+# ---------------- EXECUTIVE SUMMARY ----------------
+st.markdown("""
+### 📘 Executive Summary
+This dashboard simulates competitive market behavior using **AI-driven firms**.
+It analyzes **pricing strategy**, **profitability**, and **market dominance** over time,
+supporting strategic decision-making and competitive foresight.
+""")
+
+st.divider()
+
 
 # ---------------- SIDEBAR ----------------
 st.sidebar.header("Controls")
@@ -142,6 +190,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

@@ -59,6 +59,21 @@ if run_simulation:
 
     st.success("Simulation completed successfully!")
 
+    # --------- MARKET LEADER INSIGHT ---------
+    total_profit = profit_df.sum()
+    best_firm = total_profit.idxmax()
+    best_profit = total_profit.max()
+
+    st.markdown("## 🏆 Market Leader")
+    st.metric(
+        label="Best Performing Firm",
+        value=best_firm,
+        delta=f"Total Profit: {best_profit:,.0f}"
+    )
+
+    st.divider()
+
+
     # ================= VISUAL DASHBOARD =================
     st.divider()
     st.markdown("## 📌Market dynamic Overview ")
@@ -109,6 +124,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

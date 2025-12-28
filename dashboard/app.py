@@ -73,8 +73,26 @@ if run_simulation:
 
     st.divider()
 
+    # --------- STRATEGIC INSIGHTS ---------
+    st.markdown("## 🧠 Strategic Insights")
 
-    # ================= VISUAL DASHBOARD =================
+    avg_price = price_df.mean().mean()
+    price_volatility = price_df.std().mean()
+    avg_profit = profit_df.mean().mean()
+
+    st.markdown(f"""
+    - **Average Market Price:** {avg_price:.2f}  
+    - **Price Volatility:** {price_volatility:.2f}  
+    - **Average Firm Profit:** {avg_profit:.2f}  
+
+    📌 **Insight:**  
+    Higher volatility indicates aggressive competition.  
+    Market leader likely benefits from pricing efficiency rather than demand dominance.
+    """)
+
+    st.divider()
+
+   # ================= VISUAL DASHBOARD =================
     st.divider()
     st.markdown("## 📌Market dynamic Overview ")
 
@@ -124,6 +142,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

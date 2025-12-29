@@ -170,7 +170,42 @@ if run_simulation:
     )
 
 
-   # ================= VISUAL DASHBOARD =================
+    # ================= PORTER'S FIVE FORCES =================
+    st.divider()
+    st.markdown("## 🧠 Porter’s Five Forces – Strategic Assessment")
+
+    avg_profit = profit_df.mean().mean()
+    profit_dispersion = profit_df.std().mean()
+    price_volatility = price_df.std().mean()
+    market_concentration = share_df.mean().max()
+
+    # --- Force Calculations ---
+    competitive_rivalry = "High" if profit_dispersion > avg_profit * 0.5 else "Moderate"
+    threat_of_new_entry = "Low" if market_concentration > 0.5 else "Moderate"
+    buyer_power = "High" if price_volatility > price_df.mean().mean() * 0.3 else "Moderate"
+    supplier_power = "Low"
+    threat_of_substitutes = "Moderate"
+
+    forces_df = pd.DataFrame({
+        "Force": [
+            "Competitive Rivalry",
+            "Threat of New Entrants",
+            "Bargaining Power of Buyers",
+            "Bargaining Power of Suppliers",
+            "Threat of Substitutes"
+        ],
+        "Assessment": [
+            competitive_rivalry,
+            threat_of_new_entry,
+            buyer_power,
+            supplier_power,
+            threat_of_substitutes
+        ]
+    })
+
+    st.dataframe(forces_df, use_container_width=True, hide_index=True)
+
+    # ================= VISUAL DASHBOARD =================
     st.divider()
     st.markdown("## 📌Market dynamic Overview ")
 
@@ -220,6 +255,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

@@ -205,6 +205,27 @@ if run_simulation:
 
     st.dataframe(forces_df, use_container_width=True, hide_index=True)
 
+    # ================= MARKET STABILITY SIGNAL =================
+    st.divider()
+    st.markdown("## 🎯 Market Stability Signal")
+
+    avg_price_volatility = price_df.std().mean()
+    avg_profit_volatility = profit_df.std().mean()
+
+    if avg_price_volatility < price_df.mean().mean() * 0.2:
+         market_state = "🟢 Stable Market"
+        state_msg = "Prices and profits remain relatively predictable. Firms compete on efficiency."
+    elif avg_price_volatility < price_df.mean().mean() * 0.5:
+        market_state = "🟡 Competitive Market"
+        state_msg = "Moderate volatility indicates active but controlled competition."
+    else:
+        market_state = "🔴 Highly Aggressive Market"
+        state_msg = "High volatility reflects intense price wars and unstable profit outcomes."
+
+    st.success(market_state)
+    st.write(state_msg)
+
+
     # ================= VISUAL DASHBOARD =================
     st.divider()
     st.markdown("## 📌Market dynamic Overview ")
@@ -255,6 +276,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

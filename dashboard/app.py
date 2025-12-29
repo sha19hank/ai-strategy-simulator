@@ -140,6 +140,36 @@ if run_simulation:
 
     st.divider()
 
+    # ================= COMPETITIVE COMPARISON =================
+    st.divider()
+    st.markdown("## 🆚 Competitive Comparison Across Firms")
+
+    comparison_data = []
+
+    for firm in price_df.columns:
+        comparison_data.append({
+            "Firm": firm,
+            "Total Profit": profit_df[firm].sum(),
+            "Average Price": price_df[firm].mean(),
+            "Price Volatility": price_df[firm].std(),
+            "Average Market Share": share_df[firm].mean()
+        })
+
+    comparison_df = pd.DataFrame(comparison_data)
+
+    # Formatting for readability (premium feel)
+    comparison_df["Total Profit"] = comparison_df["Total Profit"].round(2)
+    comparison_df["Average Price"] = comparison_df["Average Price"].round(2)
+    comparison_df["Price Volatility"] = comparison_df["Price Volatility"].round(2)
+    comparison_df["Average Market Share"] = (comparison_df["Average Market Share"] * 100).round(2)
+
+    st.dataframe(
+        comparison_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+
    # ================= VISUAL DASHBOARD =================
     st.divider()
     st.markdown("## 📌Market dynamic Overview ")
@@ -190,6 +220,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

@@ -112,7 +112,11 @@ if run_simulation:
     best_firm = total_profit.idxmax()
     best_profit = total_profit.max()
 
-    st.markdown("## 🏆 Market Leader")
+    st.markdown(
+        '<div class="section-header">🏆 Market Leader</div>',
+        unsafe_allow_html=True
+    )
+
     st.metric(
         label="Best Performing Firm",
         value=best_firm,
@@ -122,7 +126,11 @@ if run_simulation:
     st.divider()
 
     # --------- STRATEGIC INSIGHTS ---------
-    st.markdown("## 🧠 Strategic Insights")
+    st.markdown(
+        '<div class="section-header">🧠 Strategic Insights</div>',
+        unsafe_allow_html=True
+    )
+
 
     avg_price = price_df.mean().mean()
     price_volatility = price_df.std().mean()
@@ -142,7 +150,11 @@ if run_simulation:
 
     # ================= COMPETITIVE COMPARISON =================
     st.divider()
-    st.markdown("## 🆚 Competitive Comparison Across Firms")
+    st.markdown(
+        '<div class="section-header">🆚 Competitive Comparison</div>',
+        unsafe_allow_html=True
+    )
+
 
     comparison_data = []
 
@@ -172,7 +184,11 @@ if run_simulation:
 
     # ================= PORTER'S FIVE FORCES =================
     st.divider()
-    st.markdown("## 🧠 Porter’s Five Forces – Strategic Assessment")
+    st.markdown(
+        '<div class="section-header">🧠 Porter’s Five Forces</div>',
+        unsafe_allow_html=True
+    )
+
 
     avg_profit = profit_df.mean().mean()
     profit_dispersion = profit_df.std().mean()
@@ -207,13 +223,17 @@ if run_simulation:
 
     # ================= MARKET STABILITY SIGNAL =================
     st.divider()
-    st.markdown("## 🎯 Market Stability Signal")
+    st.markdown(
+        '<div class="section-header">🎯 Market Stability Signal</div>',
+        unsafe_allow_html=True
+    )
+
 
     avg_price_volatility = price_df.std().mean()
     avg_profit_volatility = profit_df.std().mean()
 
     if avg_price_volatility < price_df.mean().mean() * 0.2:
-         market_state = "🟢 Stable Market"
+        market_state = "🟢 Stable Market"
         state_msg = "Prices and profits remain relatively predictable. Firms compete on efficiency."
     elif avg_price_volatility < price_df.mean().mean() * 0.5:
         market_state = "🟡 Competitive Market"
@@ -224,6 +244,24 @@ if run_simulation:
 
     st.success(market_state)
     st.write(state_msg)
+
+    # ================= KEY TAKEAWAYS =================
+    st.divider()
+    st.markdown(
+        '<div class="section-header">📌 Key Takeaways</div>',
+        unsafe_allow_html=True
+    )
+
+    st.info(
+        f"""
+        • **{best_firm}** emerges as the market leader by achieving the highest cumulative profit.  
+        • The market exhibits a **{market_state.split()[1].lower()}** competitive structure, indicating that
+          strategic positioning outweighs short-term aggressive pricing.  
+        • Firms that maintain **price stability and controlled innovation investment**
+          achieve more sustainable profitability over time.
+        """
+    )
+
 
 
     # ================= VISUAL DASHBOARD =================
@@ -265,7 +303,11 @@ if run_simulation:
 
     
     # --------- TABLES ---------
-    st.markdown("## 📋 Final Snapshot")
+    st.markdown(
+        '<div class="section-header">📋 Final Snapshot</div>',
+        unsafe_allow_html=True
+    )
+
 
     col_t1, col_t2 = st.columns(2)
 
@@ -276,6 +318,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

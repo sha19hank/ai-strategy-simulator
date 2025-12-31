@@ -9,36 +9,72 @@ from version1.env.market_env import MarketEnv
 
 st.set_page_config(page_title="AI Strategy Simulator", layout="wide")
 
-# ---------------- PREMIUM UI STYLING ----------------
+# =========================================================
+# PREMIUM UI STYLING
+# =========================================================
 st.markdown("""
 <style>
+
+/* ---- App Background ---- */
 .main {
     background-color: #0E1117;
 }
+
+/* ---- Headings ---- */
 h1, h2, h3 {
     color: #EAEAEA;
     font-weight: 700;
 }
 
+/* ---- Section Headers ---- */
 .section-header {
-    padding: 12px 0;
+    padding: 14px 0 8px 0;
     font-size: 22px;
     font-weight: 600;
+    color: #EAEAEA;
 }
+
+/* ---- KPI Cards ---- */
 [data-testid="metric-container"] {
-    background-color: #161B22;
-    border-radius: 12px;
-    padding: 16px;
+    background: linear-gradient(145deg, #161B22, #0E1117);
+    border-radius: 14px;
+    padding: 18px;
     border: 1px solid #2A2E35;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
 }
+
+/* ---- Charts ---- */
 [data-testid="stLineChart"] {
     background-color: #161B22;
-    padding: 10px;
-    border-radius: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid #2A2E35;
 }
+
+/* ---- Thicker chart lines ---- */
+.vega-embed svg path {
+    stroke-width: 2.2px !important;
+}
+
+/* ---- Tables ---- */
 [data-testid="stDataFrame"] {
     background-color: #161B22;
-    border-radius: 12px;
+    border-radius: 14px;
+    border: 1px solid #2A2E35;
+}
+
+/* ---- Primary Button ---- */
+button[kind="primary"] {
+    background-color: #4DA3FF;
+    color: black;
+    border-radius: 10px;
+}
+
+/* ---- Divider ---- */
+hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #2A2E35, transparent);
 }
 
 </style>
@@ -58,7 +94,6 @@ supporting strategic decision-making and competitive foresight.
 """)
 
 st.divider()
-
 
 # ---------------- SIDEBAR ----------------
 st.sidebar.header("Controls")
@@ -123,8 +158,6 @@ if run_simulation:
         delta=f"Total Profit: {best_profit:,.0f}"
     )
 
-    st.divider()
-
     # --------- STRATEGIC INSIGHTS ---------
     st.markdown(
         '<div class="section-header">🧠 Strategic Insights</div>',
@@ -149,7 +182,6 @@ if run_simulation:
     st.divider()
 
     # ================= COMPETITIVE COMPARISON =================
-    st.divider()
     st.markdown(
         '<div class="section-header">🆚 Competitive Comparison</div>',
         unsafe_allow_html=True
@@ -180,6 +212,25 @@ if run_simulation:
         use_container_width=True,
         hide_index=True
     )
+
+    # ---- Competitive Insight ----
+    best_profit_firm = comparison_df.loc[
+        comparison_df["Total Profit"].idxmax(), "Firm"
+    ]
+
+    best_share_firm = comparison_df.loc[
+        comparison_df["Average Market Share"].idxmax(), "Firm"
+    ]    
+
+    st.markdown(f"""
+    📌 **Competitive Insight**
+
+    - **{best_profit_firm}** leads in overall profitability, indicating superior strategic execution.
+    - **{best_share_firm}** commands the highest average market share, suggesting stronger customer preference or pricing power.
+
+    This highlights that **profit leadership and market dominance do not always coincide**, reinforcing the role of strategic positioning.
+    """)
+
 
 
     # ================= PORTER'S FIVE FORCES =================
@@ -222,7 +273,6 @@ if run_simulation:
     st.dataframe(forces_df, use_container_width=True, hide_index=True)
 
     # ================= MARKET STABILITY SIGNAL =================
-    st.divider()
     st.markdown(
         '<div class="section-header">🎯 Market Stability Signal</div>',
         unsafe_allow_html=True
@@ -252,21 +302,26 @@ if run_simulation:
         unsafe_allow_html=True
     )
 
-    st.info(
-        f"""
-        • **{best_firm}** emerges as the market leader by achieving the highest cumulative profit.  
-        • The market exhibits a **{market_state.split()[1].lower()}** competitive structure, indicating that
-          strategic positioning outweighs short-term aggressive pricing.  
-        • Firms that maintain **price stability and controlled innovation investment**
-          achieve more sustainable profitability over time.
-        """
-    )
+    st.markdown(f"""
+    <div style="
+    border-left: 4px solid #4DA3FF;
+    padding: 18px;
+    background-color: #0E1117;
+    border-radius: 10px;
+    line-height: 1.7;
+    ">
+    <b>Key Takeaways</b><br><br>
+    • <b>{best_firm}</b> emerges as the market leader by achieving the highest cumulative profit.<br>
+    • The market exhibits a <b>{market_state.split()[1].lower()}</b> competitive structure.<br>
+    • Firms maintaining <b>price stability and controlled innovation</b> achieve more sustainable profitability.
+    </div>
+    """, unsafe_allow_html=True)
 
 
 
     # ================= VISUAL DASHBOARD =================
     st.divider()
-    st.markdown("## 📌Market dynamic Overview ")
+    st.markdown("## 📌Market Dynamics Overview ")
 
     #=================KPI METRICS====================
 
@@ -280,29 +335,25 @@ if run_simulation:
 
     with col_kpi3:
         st.metric("Base Demand", base_demand)
-    st.divider()
 
     # --------- CHARTS ROW 1 ---------
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("**Prices Over Time**")
-        st.line_chart(price_df, height=300)
+        st.line_chart(price_df, height=300,use_container_width=True)
 
     with col2:
         st.markdown("**Profit Over Time**")
-        st.line_chart(profit_df, height=300)
+        st.line_chart(profit_df, height=300,use_container_width=True)
 
-    st.divider()
 
     #--------- CHARTS ROW 2 ---------
 
     st.markdown("**Market Share Over Time**")
-    st.line_chart(share_df, height=300)
-
-    st.divider()
+    st.line_chart(share_df, height=300,use_container_width=True)
 
     
-    # --------- TABLES ---------
+    # --------- FINAL SNAPSHOTS---------
     st.markdown(
         '<div class="section-header">📋 Final Snapshot</div>',
         unsafe_allow_html=True
@@ -318,6 +369,7 @@ if run_simulation:
     with col_t2:
         st.markdown("### Latest Profits")
         st.dataframe(profit_df.tail(1), use_container_width=True)
+
 
 
 

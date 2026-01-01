@@ -24,10 +24,12 @@ class MarketEnv(ParallelEnv):
         price_bounds=(1.0, 500.0),
         innovation_bounds=(0.0, 50.0),
         marginal_cost=20.0,
-        capital_cost=5.0
+        capital_cost=5.0,
     ):
         super().__init__()
-        self.render_mode = None  # REQUIRED for SuperSuit
+
+        # Required by SuperSuit / SB3
+        self.render_mode = None
 
         self.n_firms = n_firms
         self.max_steps = max_steps
@@ -37,20 +39,25 @@ class MarketEnv(ParallelEnv):
         self.marginal_cost = marginal_cost
         self.capital_cost = capital_cost
 
+        # ---- Agent sets (DO NOT MUTATE) ----
         self.agents = [f"firm_{i}" for i in range(n_firms)]
         self.possible_agents = self.agents[:]
 
-        # Action space: [price, innovation investment]
+        # ---- Action spaces: [price, innovation spend] ----
         self._action_spaces = {
             agent: spaces.Box(
-                low=np.array([price_bounds[0], innovation_bounds[0]], dtype=np.float32),
-                high=np.array([price_bounds[1], innovation_bounds[1]], dtype=np.float32),
+                low=np.array(
+                    [price_bounds[0], innovation_bounds[0]], dtype=np.float32
+                ),
+                high=np.array(
+                    [price_bounds[1], innovation_bounds[1]], dtype=np.float32
+                ),
                 dtype=np.float32,
             )
-            for agent in self.agents
+            for agent in self.possible_agents
         }
 
-        # Observation space: prices, shares, innovation, total demand
+        # ---- Observation spaces ----
         self._observation_spaces = {
             agent: spaces.Box(
                 low=0.0,
@@ -58,25 +65,30 @@ class MarketEnv(ParallelEnv):
                 shape=(n_firms * 3 + 1,),
                 dtype=np.float32,
             )
-            for agent in self.agents
+            for agent in self.possible_agents
         }
 
         self.reset()
 
-    # ---- REQUIRED PettingZoo API METHODS ----
+    # =====================================================
+    # Required PettingZoo API
+    # =====================================================
     def observation_space(self, agent):
         return self._observation_spaces[agent]
 
     def action_space(self, agent):
         return self._action_spaces[agent]
 
-    # ---------------------------------------
-
+    # =====================================================
+    # Environment lifecycle
+    # =====================================================
     def reset(self, seed=None, options=None):
         self.timestep = 0
 
         self.prices = np.random.uniform(
-            self.price_bounds[0], self.price_bounds[1], self.n_firms
+            self.price_bounds[0],
+            self.price_bounds[1],
+            self.n_firms,
         ).astype(np.float32)
 
         self.innovation = np.zeros(self.n_firms, dtype=np.float32)
@@ -84,63 +96,77 @@ class MarketEnv(ParallelEnv):
         self.demand = float(self.base_demand)
 
         observations = self._get_observations()
-        infos = {agent: {} for agent in self.agents}
+        infos = {agent: {} for agent in self.possible_agents}
+
         return observations, infos
 
     def step(self, actions):
         self.timestep += 1
 
-        # Extract actions
-        prices = np.array([actions[a][0] for a in self.agents], dtype=np.float32)
-        innovation_spend = np.array([actions[a][1] for a in self.agents], dtype=np.float32)
+        # ---- IMPORTANT FIX ----
+        # Always index actions using possible_agents
+        prices = np.array(
+            [actions[agent][0] for agent in self.possible_agents],
+            dtype=np.float32,
+        )
+
+        innovation_spend = np.array(
+            [actions[agent][1] for agent in self.possible_agents],
+            dtype=np.float32,
+        )
 
         self.prices = prices
         self.innovation += innovation_spend
 
-        # Compute demand allocation
+        # ---- Demand allocation ----
         firm_demand, market_share = compute_demand(
             prices=self.prices,
             innovation=self.innovation,
-            base_demand=self.base_demand
+            base_demand=self.base_demand,
         )
 
         self.market_share = market_share.astype(np.float32)
         self.demand = float(np.sum(firm_demand))
 
-        # Compute rewards (economic profit)
+        # ---- Rewards (economic profit) ----
         rewards = {}
-        for i, agent in enumerate(self.agents):
+        for i, agent in enumerate(self.possible_agents):
             revenue = self.prices[i] * firm_demand[i]
             cost = compute_cost(
                 quantity=firm_demand[i],
                 marginal_cost=self.marginal_cost,
-                innovation_spend=innovation_spend[i]
+                innovation_spend=innovation_spend[i],
             )
             rewards[agent] = float(revenue - cost - self.capital_cost)
 
         observations = self._get_observations()
 
-        # Episode termination (NO AGENT DEATH)
+        # ---- Episode termination (NO AGENT DEATH) ----
         done = self.timestep >= self.max_steps
-        terminations = {agent: done for agent in self.agents}
-        truncations = {agent: False for agent in self.agents}
-        infos = {agent: {} for agent in self.agents}
+        terminations = {agent: done for agent in self.possible_agents}
+        truncations = {agent: False for agent in self.possible_agents}
+        infos = {agent: {} for agent in self.possible_agents}
 
         return observations, rewards, terminations, truncations, infos
 
+    # =====================================================
+    # Helpers
+    # =====================================================
     def _get_observations(self):
-        obs = np.concatenate([
-            self.prices,
-            self.market_share,
-            self.innovation,
-            np.array([self.demand], dtype=np.float32)
-        ]).astype(np.float32)
+        obs = np.concatenate(
+            [
+                self.prices,
+                self.market_share,
+                self.innovation,
+                np.array([self.demand], dtype=np.float32),
+            ]
+        ).astype(np.float32)
 
-        return {agent: obs.copy() for agent in self.agents}
+        return {agent: obs.copy() for agent in self.possible_agents}
 
     def render(self):
         print(f"Step {self.timestep}")
-        for i, agent in enumerate(self.agents):
+        for i, agent in enumerate(self.possible_agents):
             print(
                 f"{agent} | Price: {self.prices[i]:.2f} | "
                 f"Share: {self.market_share[i]:.2f} | "

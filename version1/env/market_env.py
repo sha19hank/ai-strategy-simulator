@@ -4,7 +4,6 @@ from gymnasium import spaces
 
 from core.models.demand import compute_demand
 from core.models.cost import compute_cost
-from core.models.innovation import innovation_effect
 
 
 class MarketEnv(ParallelEnv):
@@ -28,6 +27,7 @@ class MarketEnv(ParallelEnv):
         capital_cost=5.0
     ):
         super().__init__()
+        self.render_mode = None  # REQUIRED for SuperSuit
 
         self.n_firms = n_firms
         self.max_steps = max_steps
@@ -41,21 +41,21 @@ class MarketEnv(ParallelEnv):
         self.possible_agents = self.agents[:]
 
         # Action space: [price, innovation investment]
-        self.action_spaces = {
+        self._action_spaces = {
             agent: spaces.Box(
-                low=np.array([price_bounds[0], innovation_bounds[0]]),
-                high=np.array([price_bounds[1], innovation_bounds[1]]),
+                low=np.array([price_bounds[0], innovation_bounds[0]], dtype=np.float32),
+                high=np.array([price_bounds[1], innovation_bounds[1]], dtype=np.float32),
                 dtype=np.float32,
             )
             for agent in self.agents
         }
 
-        # Observation space (shared market view)
-        self.observation_spaces = {
+        # Observation space: prices, shares, innovation, total demand
+        self._observation_spaces = {
             agent: spaces.Box(
                 low=0.0,
                 high=np.inf,
-                shape=(n_firms * 3 + 1,),  # prices, shares, innovation + demand
+                shape=(n_firms * 3 + 1,),
                 dtype=np.float32,
             )
             for agent in self.agents
@@ -63,15 +63,25 @@ class MarketEnv(ParallelEnv):
 
         self.reset()
 
+    # ---- REQUIRED PettingZoo API METHODS ----
+    def observation_space(self, agent):
+        return self._observation_spaces[agent]
+
+    def action_space(self, agent):
+        return self._action_spaces[agent]
+
+    # ---------------------------------------
+
     def reset(self, seed=None, options=None):
         self.timestep = 0
 
         self.prices = np.random.uniform(
             self.price_bounds[0], self.price_bounds[1], self.n_firms
-        )
-        self.innovation = np.zeros(self.n_firms)
-        self.market_share = np.ones(self.n_firms) / self.n_firms
-        self.demand = self.base_demand
+        ).astype(np.float32)
+
+        self.innovation = np.zeros(self.n_firms, dtype=np.float32)
+        self.market_share = np.ones(self.n_firms, dtype=np.float32) / self.n_firms
+        self.demand = float(self.base_demand)
 
         observations = self._get_observations()
         infos = {agent: {} for agent in self.agents}
@@ -81,8 +91,8 @@ class MarketEnv(ParallelEnv):
         self.timestep += 1
 
         # Extract actions
-        prices = np.array([actions[a][0] for a in self.agents])
-        innovation_spend = np.array([actions[a][1] for a in self.agents])
+        prices = np.array([actions[a][0] for a in self.agents], dtype=np.float32)
+        innovation_spend = np.array([actions[a][1] for a in self.agents], dtype=np.float32)
 
         self.prices = prices
         self.innovation += innovation_spend
@@ -94,9 +104,10 @@ class MarketEnv(ParallelEnv):
             base_demand=self.base_demand
         )
 
-        self.market_share = market_share
+        self.market_share = market_share.astype(np.float32)
+        self.demand = float(np.sum(firm_demand))
 
-        # Compute profits
+        # Compute rewards (economic profit)
         rewards = {}
         for i, agent in enumerate(self.agents):
             revenue = self.prices[i] * firm_demand[i]
@@ -105,21 +116,15 @@ class MarketEnv(ParallelEnv):
                 marginal_cost=self.marginal_cost,
                 innovation_spend=innovation_spend[i]
             )
-            economic_profit = revenue - cost - self.capital_cost
-            rewards[agent] = economic_profit
+            rewards[agent] = float(revenue - cost - self.capital_cost)
 
-        # Observations
         observations = self._get_observations()
 
-        # Termination
-        terminations = {
-            agent: self.timestep >= self.max_steps for agent in self.agents
-        }
+        # Episode termination (NO AGENT DEATH)
+        done = self.timestep >= self.max_steps
+        terminations = {agent: done for agent in self.agents}
         truncations = {agent: False for agent in self.agents}
         infos = {agent: {} for agent in self.agents}
-
-        if self.timestep >= self.max_steps:
-            self.agents = []
 
         return observations, rewards, terminations, truncations, infos
 
@@ -128,8 +133,8 @@ class MarketEnv(ParallelEnv):
             self.prices,
             self.market_share,
             self.innovation,
-            np.array([self.demand])
-        ])
+            np.array([self.demand], dtype=np.float32)
+        ]).astype(np.float32)
 
         return {agent: obs.copy() for agent in self.agents}
 

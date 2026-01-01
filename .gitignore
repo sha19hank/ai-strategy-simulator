@@ -1,0 +1,54 @@
+# ===============================
+# Python bytecode & cache
+# ===============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ===============================
+# Virtual environments
+# ===============================
+venv/
+.env/
+.env.local/
+
+# ===============================
+# Experiment outputs (DO NOT TRACK)
+# ===============================
+version1/experiments/runs/
+version1/experiments/logs/
+version2/experiments/
+outputs/
+logs/
+
+# ===============================
+# Model files & checkpoints
+# ===============================
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.pkl
+
+# ===============================
+# Jupyter / notebooks
+# ===============================
+.ipynb_checkpoints/
+
+# ===============================
+# OS-specific junk
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# VS Code settings (local only)
+# ===============================
+.vscode/
+
+# ===============================
+# Temporary files
+# ===============================
+*.tmp
+*.log

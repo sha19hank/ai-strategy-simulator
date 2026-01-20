@@ -16,11 +16,11 @@ venv/
 # ===============================
 # Experiment outputs (DO NOT TRACK)
 # ===============================
+version1/experiments/models/
 version1/experiments/runs/
 version1/experiments/logs/
 version2/experiments/
 outputs/
-logs/
 
 # ===============================
 # Model files & checkpoints
@@ -30,6 +30,7 @@ logs/
 *.ckpt
 *.h5
 *.pkl
+*.zip
 
 # ===============================
 # Jupyter / notebooks
@@ -52,4 +53,3 @@ Thumbs.db
 # ===============================
 *.tmp
 *.log
-version1/experiments/*.zip

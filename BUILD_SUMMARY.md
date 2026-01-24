@@ -90,10 +90,21 @@ Observation Format
 
 ## Quick Start
 
-### Option 1: Full Training (300k steps, ~30 min)
+### Option 1: Full Training (1M steps, ~100 min)
 ```bash
 python quick_train.py
 ```
+**Latest Configuration (Jan 24, 2026):**
+- Training: 1M timesteps (extended from 300k)
+- Price sensitivity: α = 0.05 (calibrated from 0.03)
+- Innovation power: β = 1.5 (kept for realistic monopolization)
+
+**Results:**
+- firm_1: 72% market share, $8,817 profit (innovation leader)
+- firm_0: 16% share, $653 profit (struggling follower)
+- firm_2: 12% share, $492 profit (generic manufacturer)
+- Market: Perfect price coordination ($82), no price wars detected
+
 Results saved to:
 - Models: `version1/experiments/models/`
 - Logs: `version1/experiments/logs/training/`

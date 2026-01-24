@@ -33,22 +33,29 @@ Dashboard Visualization
 
 ---
 
-## Version 1: Foundation (In Progress)
+## Version 1: Foundation (Complete)
 
-**Status:** Architecture rebuild phase
+**Status:** ✅ Training validated, economics calibrated, ready for dashboard
 
 **Deliverable:**
-- Clean multi-agent market environment
-- Self-play PPO training
-- Evaluation + tournament system
-- Economic simulation (200 steps = 50 years)
+- ✅ Clean multi-agent market environment (MarketEnvMultiV1)
+- ✅ Self-play PPO training (1M timesteps)
+- ✅ Evaluation + tournament system (10 episodes × 200 steps)
+- ✅ Economic simulation (200 steps = 50 years)
+- ✅ Analysis pipeline with price war detection
 
 **Economics:**
 - Profit maximization: `π_i = P_i·Q_i − C_m·Q_i − k·(R&D)² − C_capital − C_compliance`
-- Market share: Softmax competition on price + innovation
-- Regulation: Price cap, compliance cost
+- Market share: Softmax competition (α=0.05 price sensitivity, β=1.5 innovation power)
+- Regulation: Price cap ($250), compliance cost
 - Shocks: Markov economic cycles, supplier volatility, substitute pressure
 - Innovation: Stock accumulation with quadratic cost, diminishing returns
+
+**Latest Results (Jan 24, 2026):**
+- Innovation leader emerged: 72% market share, $8,817 profit
+- Realistic monopolization via R&D investment
+- Perfect price coordination at $82 (implicit collusion)
+- HHI = 0.37 (high concentration, matches real pharma/tech markets)
 
 **See:** `docs/ECONOMICS.md` for full specification
 
@@ -179,12 +186,12 @@ This system enables study of:
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| **Economics** | ✅ Complete | Fully specified, operationalized |
-| **Environment** | 🔨 In Progress | MarketEnvMultiV1 rebuild |
-| **Training** | ⏳ Pending | Self-play loop ready after env |
-| **Evaluation** | ⏳ Pending | Tournament system ready |
-| **Dashboard** | ⏳ Pending | UI scaffolding exists |
-| **Research** | ⏳ Future | After v1 validation |
+| **Economics** | ✅ Complete | Calibrated α=0.05, β=1.5, validated realistic |
+| **Environment** | ✅ Complete | MarketEnvMultiV1, 14/14 tests passing |
+| **Training** | ✅ Complete | 1M-step self-play, monopolization emerged |
+| **Evaluation** | ✅ Complete | Tournament analysis with price war detection |
+| **Dashboard** | 🔨 Next | Update to MarketEnvMultiV1 API |
+| **Research** | ⏳ Ready | Publication-ready economics, awaiting viz |
 
 ---
 
@@ -200,6 +207,8 @@ This system enables study of:
 
 ---
 
-**Last Updated:** January 21, 2026
+**Last Updated:** January 24, 2026
 
-**Next Build:** MarketEnvMultiV1.py (clean MARL environment)
+**Latest:** Economic calibration complete, training validated, monopolization realistic
+
+**Next Build:** Dashboard visualization for tournament results

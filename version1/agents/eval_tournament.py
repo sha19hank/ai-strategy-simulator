@@ -14,7 +14,7 @@ import pandas as pd
 from pathlib import Path
 from stable_baselines3 import PPO
 
-from env.market_env_multi_v1 import MarketEnvMultiV1
+from version1.env.market_env_multi_v1 import MarketEnvMultiV1
 
 
 def load_models(model_dir: str) -> dict:

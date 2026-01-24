@@ -33,7 +33,7 @@ def main():
     # Train agents
     print("\n[1/2] Training agents...")
     models, env = train_self_play(
-        total_timesteps=300000,
+        total_timesteps=1000000,  # UPDATED from 300k to 1M for strategic discovery
         n_episodes=n_episodes,
         learning_rate=3e-4,
         n_steps=2048,

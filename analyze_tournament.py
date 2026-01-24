@@ -64,3 +64,31 @@ for agent in ['firm_0', 'firm_1', 'firm_2']:
     agent_data = df[df['agent'] == agent]
     corr = agent_data['innovation_stock'].corr(agent_data['market_share'])
     print(f'{agent}: {corr:.3f} (more innovation -> {"higher" if corr > 0 else "lower"} share)')
+
+print('\n=== PRICE WAR ANALYSIS ===')
+price_dispersion = df.groupby('episode')['price'].std()
+price_war_threshold = 5.0  # $5+ std dev indicates active competition
+price_war_episodes = price_dispersion[price_dispersion > price_war_threshold].index.tolist()
+print(f'Price war episodes: {price_war_episodes} ({len(price_war_episodes)}/10)')
+
+if len(price_war_episodes) > 0:
+    pw_data = df[df['episode'].isin(price_war_episodes)]
+    print(f'\nDuring price wars:')
+    print(f'  Avg price range: ${pw_data.groupby("episode")["price"].apply(lambda x: x.max() - x.min()).mean():.2f}')
+    print(f'  Avg profit impact: ${pw_data.groupby("episode")["cum_profit"].last().mean():.0f}')
+    pw_winners = pw_data.groupby(['episode', 'agent'])['market_share'].mean().groupby('episode').idxmax()
+    print(f'  Price war winners: {pw_winners.value_counts().to_dict()}')
+else:
+    print('No price wars detected (price coordination observed)')
+
+print('\n=== PRICING STRATEGIES ===')
+for agent in ['firm_0', 'firm_1', 'firm_2']:
+    agent_data = df[df['agent'] == agent]
+    avg_price = agent_data['price'].mean()
+    avg_cost = agent_data['marginal_cost'].mean()
+    markup = ((avg_price - avg_cost) / avg_cost) * 100
+    print(f'{agent}:')
+    print(f'  Avg markup: {markup:.1f}% above cost')
+    print(f'  Price volatility: ${agent_data["price"].std():.2f}')
+    print(f'  Min price: ${agent_data["price"].min():.2f}')
+    print(f'  Max price: ${agent_data["price"].max():.2f}')

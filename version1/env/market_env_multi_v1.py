@@ -61,7 +61,7 @@ class MarketEnvMultiV1(ParallelEnv):
         self.k_rd = 0.05  # R&D cost coefficient (quadratic)
         
         # Market competition
-        self.alpha = 0.03  # Price sensitivity (softmax)
+        self.alpha = 0.05  # Price sensitivity (softmax) - UPDATED to enable price wars
         self.beta0 = 1.5  # Innovation power (base)
         self.beta_tech_progress = 0.002  # Tech progress rate
         self.beta_diminishing = 0.01  # Diminishing returns on innovation

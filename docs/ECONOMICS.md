@@ -51,15 +51,20 @@ $$S_i(t) = \frac{\exp(-\alpha \cdot P_i(t) + \beta(t) \cdot I_i(t))}{\sum_j \exp
 
 **Parameters:**
 ```
-α = 0.03 (price sensitivity / price elasticity coefficient)
+α = 0.05 (price sensitivity / price elasticity coefficient) ← UPDATED from 0.03
 β(t) = 1.5 · TechProgress(t) · DiminishingReturns(I_total)
      = 1.5 · (1 + 0.002·t) · (1 + 0.01·I_total)^-1
 
 Interpretation:
-- Higher price → lower market share (buyer power)
+- Higher price → lower market share (buyer power) [STRENGTHENED]
 - Higher innovation → higher market share (tech advantage)
 - β increases over time (tech progress)
 - β diminishes as total innovation saturates
+
+Competitive Dynamics:
+- Price wars are now viable strategies (39% market share swing per $10 undercut)
+- Innovation still creates dominance (realistic monopolization possible)
+- Multiple Nash equilibria: innovate-premium vs undercut-generic
 ```
 
 ---
@@ -286,7 +291,7 @@ This economic model is designed to exhibit:
 | R&D cost coeff | k | 0.05 | — | Quadratic cost |
 | Price cap | P_max | 250 | $ | Government ceiling |
 | Price elasticity | ε | 0.015 | — | Buyer power |
-| Price sensitivity | α | 0.03 | — | Softmax coeff |
+| Price sensitivity | α | 0.05 | — | Softmax coeff ← UPDATED |
 | Innovation power | β₀ | 1.5 | — | Tech advantage |
 | Tech progress rate | — | 0.002 | /year | Exogenous tech |
 | Diminishing returns | — | 0.01 | — | Innovation saturation |

@@ -88,7 +88,7 @@ def render_summary(summary):
                 st.markdown(f"Episodes with intense price competition: {summary['price_war_episodes']}")
             else:
                 st.markdown("🤝 **Price Coordination Observed**")
-                st.markdown("Firms maintained similar pricing throughout (implicit collusion or Nash equilibrium)")
+                st.markdown("Firms maintained similar pricing throughout")
         
         with col2:
             # Innovation competition

@@ -9,10 +9,15 @@ Runs trained agents in a 200-step tournament and logs:
 """
 
 import os
+import sys
 import numpy as np
 import pandas as pd
 from pathlib import Path
 from stable_baselines3 import PPO
+
+# Add project root to path for imports
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 from version1.env.market_env_multi_v1 import MarketEnvMultiV1
 
@@ -184,12 +189,12 @@ def run_tournament(
 if __name__ == "__main__":
     import sys
     
+    # Use default model directory if not provided
     if len(sys.argv) < 2:
-        print("Usage: python -m version1.agents.eval_tournament <model_dir>")
-        print("Example: python -m version1.agents.eval_tournament version1/experiments/models")
-        sys.exit(1)
-    
-    model_dir = sys.argv[1]
+        model_dir = "version1/experiments/models"
+        print(f"No model directory specified. Using default: {model_dir}")
+    else:
+        model_dir = sys.argv[1]
     
     # Load models
     models = load_models(model_dir)

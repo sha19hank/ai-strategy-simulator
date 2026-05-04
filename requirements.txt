@@ -1,22 +1,22 @@
 # ================================================================
-# DEPLOYMENT: Streamlit Cloud (Python 3.10+)
-# This is the minimal set needed for the DASHBOARD ONLY
-# Training dependencies should be in a separate requirements-dev.txt
+# DEPLOYMENT: Streamlit Cloud
+# Updated for Python 3.14+ compatibility with pre-built wheels
 # ================================================================
 
-# Core Dashboard
+# Core Dashboard (updated for Python 3.14)
 streamlit==1.28.1
-pandas==2.1.0
-plotly==5.17.0
+pandas>=2.2.0
+plotly>=5.17.0
 
-# Data Processing
-numpy==1.24.3
+# Data Processing (Python 3.14 compatible)
+numpy>=2.0.0
 
 # Utilities
 python-dotenv==1.0.0
 
 # ================================================================
-# IMPORTANT: For LOCAL DEVELOPMENT (not deployed):
-# If you want to train models locally, install from requirements-dev.txt
-# But DO NOT include training packages in deployment!
+# KEY CHANGES:
+# - numpy: 1.24.3 → >=2.0.0 (Python 3.14 support)
+# - pandas: 2.1.0 → >=2.2.0 (Python 3.14 Cython fix)
+# - Uses pre-built wheels on PyPI (no compilation)
 # ================================================================

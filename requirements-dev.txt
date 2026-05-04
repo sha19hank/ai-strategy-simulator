@@ -3,11 +3,11 @@
 # Includes training + dashboard + dev tools
 # ================================================================
 
-# Dashboard (required)
+# Dashboard (updated for Python 3.14)
 streamlit==1.28.1
-pandas==2.1.0
-plotly==5.17.0
-numpy==1.24.3
+pandas>=2.2.0
+plotly>=5.17.0
+numpy>=2.0.0
 python-dotenv==1.0.0
 
 # Core RL & Environment (for training)

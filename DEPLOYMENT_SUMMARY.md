@@ -21,20 +21,22 @@
 
 ## 📋 FILES CREATED/MODIFIED
 
+### ✅ FILES CREATED/MODIFIED
+
 ### ✅ Created:
 ```
-runtime.txt                 → Python 3.10.13 specification
+runtime.txt                 → Python version specification (optional)
 .streamlit/config.toml      → Streamlit Cloud configuration  
 requirements-dev.txt        → For local development (with training deps)
-requirements-deploy.txt     → Exact versions (backup reference)
+requirements-deploy.txt     → Reference versions (backup)
 DEPLOYMENT_GUIDE.md         → Complete deployment guide
 ```
 
 ### ✅ Modified:
 ```
-requirements.txt            → Now contains ONLY dashboard dependencies
-                              (was: 15+ packages)
-                              (now: 5 packages)
+requirements.txt            → Updated for Python 3.14 compatibility
+                              numpy: 1.24.3 → >=2.0.0
+                              pandas: 2.1.0 → >=2.2.0
 ```
 
 ### ✅ Verified (No changes needed):

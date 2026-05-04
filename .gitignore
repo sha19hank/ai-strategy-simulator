@@ -18,7 +18,10 @@ venv/
 # ===============================
 version1/experiments/models/
 version1/experiments/runs/
-version1/experiments/logs/
+version1/experiments/logs/*
+!version1/experiments/logs/evaluation/
+version1/experiments/logs/evaluation/*
+!version1/experiments/logs/evaluation/tournament_results.csv
 version2/experiments/
 outputs/
 

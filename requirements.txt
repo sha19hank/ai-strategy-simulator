@@ -1,20 +1,22 @@
-# Core RL & Environment
-numpy==1.24.3
-gymnasium==0.28.1
-pettingzoo==1.24.2
-supersuit==3.9.1
-stable-baselines3==2.1.0
+# ================================================================
+# DEPLOYMENT: Streamlit Cloud (Python 3.10+)
+# This is the minimal set needed for the DASHBOARD ONLY
+# Training dependencies should be in a separate requirements-dev.txt
+# ================================================================
 
-# Dashboard
+# Core Dashboard
 streamlit==1.28.1
 pandas==2.1.0
 plotly==5.17.0
 
+# Data Processing
+numpy==1.24.3
+
 # Utilities
 python-dotenv==1.0.0
-pyyaml==6.0
 
-# Development (optional)
-pytest==7.4.2
-black==23.10.0
-flake8==6.1.0
+# ================================================================
+# IMPORTANT: For LOCAL DEVELOPMENT (not deployed):
+# If you want to train models locally, install from requirements-dev.txt
+# But DO NOT include training packages in deployment!
+# ================================================================

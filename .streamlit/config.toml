@@ -1,0 +1,29 @@
+# ================================================================
+# Streamlit Configuration for Cloud Deployment
+# Python version is specified in runtime.txt (not here)
+# ================================================================
+
+[client]
+showWarningOnDirectExecution = false
+toolbarMode = "viewer"
+
+[logger]
+level = "warning"
+
+[theme]
+primaryColor = "#FF6B9D"
+backgroundColor = "#0D0D0D"
+secondaryBackgroundColor = "#1A1A1A"
+textColor = "#E0E0E0"
+font = "sans serif"
+
+[server]
+enableCORS = true
+enableXsrfProtection = true
+
+# ================================================================
+# Performance: Disable deprecation warnings
+# ================================================================
+[deprecation]
+showPyarrowDeprecationWarnings = false
+

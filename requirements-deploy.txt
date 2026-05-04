@@ -1,0 +1,24 @@
+# ================================================================
+# DEPLOYMENT REQUIREMENTS - Streamlit Cloud
+# Python 3.10+ only (NOT 3.14)
+# Dashboard only - NO TRAINING dependencies
+# ================================================================
+
+# Core Dashboard
+streamlit==1.28.1
+pandas==2.1.0
+plotly==5.17.0
+
+# Data Processing (minimal)
+numpy==1.24.3
+
+# Utilities
+python-dotenv==1.0.0
+
+# ================================================================
+# IMPORTANT NOTES:
+# - Removed: gymnasium, pettingzoo, supersuit, stable-baselines3
+#   (These are for training only, not needed in dashboard)
+# - Removed: pytorch/torch (causes deployment timeout)
+# - This dashboard ONLY loads pre-trained models, no training
+# ================================================================

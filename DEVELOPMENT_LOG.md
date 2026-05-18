@@ -1,5 +1,8 @@
 # Development Log
 
+NOTE: This file is a historical build log and may contain outdated commands.
+For current usage, start with README.md and docs/overview.md.
+
 **AI Strategy Simulator — Session Progress Tracking**
 
 ---

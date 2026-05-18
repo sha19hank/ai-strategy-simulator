@@ -16,8 +16,21 @@ def load_tournament_data(version='version1', experiment_name=None):
     Returns:
         pd.DataFrame or None if file doesn't exist
     """
-    base_path = Path(version) / 'experiments' / 'logs' / 'evaluation'
-    csv_path = base_path / 'tournament_results.csv'
+    # Prefer experiment pipeline outputs (repo-root results/run_*/tournament_results.csv).
+    results_root = Path('results')
+    csv_path = None
+    if results_root.exists():
+        runs = sorted(results_root.glob('run_*'))
+        if runs:
+            latest_run = runs[-1]
+            candidate = latest_run / 'tournament_results.csv'
+            if candidate.exists():
+                csv_path = candidate
+
+    # Fall back to legacy location used by older scripts.
+    if csv_path is None:
+        base_path = Path(version) / 'experiments' / 'logs' / 'evaluation'
+        csv_path = base_path / 'tournament_results.csv'
     
     if not csv_path.exists():
         return None

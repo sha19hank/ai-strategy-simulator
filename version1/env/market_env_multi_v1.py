@@ -103,9 +103,10 @@ class MarketEnvMultiV1(ParallelEnv):
         }
         
         # Observation space: Full state observability
-        # [prices (n), innovation_stocks (n), market_shares (n), 
+        # [prices (n), innovation_stocks (n), market_shares (n),
         #  marginal_costs (n), avg_price, demand, time, regime, substitute_pressure]
-        obs_size = 3 * n_firms + 6  # 3n + 6 dimensions
+        # Total dims = 4*n + 5
+        obs_size = 4 * n_firms + 5
         self._observation_spaces = {
             agent: spaces.Box(
                 low=0.0,
@@ -216,7 +217,7 @@ class MarketEnvMultiV1(ParallelEnv):
         # ================================================================
         
         # Extract and clip prices and R&D
-        prices = np.array(
+        proposed_prices = np.array(
             [actions[agent][0] for agent in self.agents],
             dtype=np.float32
         )
@@ -224,18 +225,9 @@ class MarketEnvMultiV1(ParallelEnv):
             [actions[agent][1] for agent in self.agents],
             dtype=np.float32
         )
-        
-        # Hard constraint: enforce price bounds
-        prices = np.clip(
-            prices,
-            self.marginal_costs + self.P_min_margin,
-            self.P_max
-        )
-        
+
         # Clip R&D to non-negative
         rd_investments = np.maximum(rd_investments, 0.0)
-        
-        self.prices = prices
         
         # Update innovation stocks (accumulate R&D)
         self.innovation_stocks += rd_investments
@@ -263,6 +255,19 @@ class MarketEnvMultiV1(ParallelEnv):
         
         # Supplier shock (lognormal)
         self.supplier_shock = self._rng.lognormal(0, self.supplier_shock_std)
+
+        # Apply cost shock: update marginal costs BEFORE validating prices
+        self.marginal_costs = (
+            self.C_base * self.supplier_shock * np.ones(self.n_firms)
+        ).astype(np.float32)
+
+        # Hard constraint: enforce price bounds using UPDATED marginal costs
+        prices = np.clip(
+            proposed_prices,
+            self.marginal_costs + self.P_min_margin,
+            self.P_max,
+        )
+        self.prices = prices
         
         # Substitute pressure (random walk)
         self.substitute_pressure += self._rng.normal(0, self.substitute_pressure_drift)
@@ -314,11 +319,6 @@ class MarketEnvMultiV1(ParallelEnv):
         # ================================================================
         
         quantities = self.market_shares * self.effective_demand
-        
-        # Update marginal costs (with supplier shock)
-        self.marginal_costs = (
-            self.C_base * self.supplier_shock * np.ones(self.n_firms)
-        ).astype(np.float32)
         
         # ================================================================
         # 6. PROFIT CALCULATION (Reward)

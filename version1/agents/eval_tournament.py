@@ -59,6 +59,7 @@ def run_tournament(
     max_steps: int = 200,
     output_dir: str = "version1/experiments/logs/evaluation",
     render: bool = False,
+    seed: int | None = None,
 ) -> pd.DataFrame:
     """
     Run tournament and log all market dynamics.
@@ -90,7 +91,10 @@ def run_tournament(
         print(f"Episode {episode+1}/{n_episodes}")
         
         env = MarketEnvMultiV1(n_firms=3, max_steps=max_steps)
-        observations, _ = env.reset()
+        if seed is None:
+            observations, _ = env.reset()
+        else:
+            observations, _ = env.reset(seed=int(seed) + episode)
         
         cumulative_profits = {"firm_0": 0, "firm_1": 0, "firm_2": 0}
         

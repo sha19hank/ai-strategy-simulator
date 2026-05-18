@@ -1,0 +1,10 @@
+{
+  "timesteps": 50,
+  "seed": 1,
+  "timestamp": "20260518_175351",
+  "model_paths": {
+    "firm_0": "models\\model_v1_firm_0.zip",
+    "firm_1": "models\\model_v1_firm_1.zip",
+    "firm_2": "models\\model_v1_firm_2.zip"
+  }
+}

@@ -1,53 +1,31 @@
+"""Legacy script kept for backward compatibility.
+
+Historically this referenced a wrapper (`version1.env.v1_wrappers`) that no longer
+exists in the repo. Phase 2 foundation standardizes training via the root
+entry point:
+
+  python train.py --timesteps ... --save models/model_v1.zip
+
+This file now redirects to that canonical entry point.
+"""
+
+from __future__ import annotations
+
+import subprocess
 import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-import os
-from stable_baselines3 import PPO
-from stable_baselines3.common.logger import configure
-
-from version1.env.v1_wrappers import make_v1_env
+from pathlib import Path
 
 
-def train():
-    # Create environment
-    env = make_v1_env(
-        n_firms=3,
-        max_steps=200,
-        num_envs=4,
-        normalize_reward=True
-    )
-
-    # Logging directory
-    log_dir = "version1/experiments/logs"
-    os.makedirs(log_dir, exist_ok=True)
-
-    logger = configure(log_dir, ["stdout", "csv"])
-
-    # PPO model
-    model = PPO(
-        policy="MlpPolicy",
-        env=env,
-        learning_rate=3e-4,
-        n_steps=1024,
-        batch_size=256,
-        gamma=0.99,
-        gae_lambda=0.95,
-        ent_coef=0.01,
-        clip_range=0.2,
-        verbose=1,
-    )
-
-    model.set_logger(logger)
-
-    # Train
-    model.learn(total_timesteps=300_000)
-
-    # Save model
-    model.save("version1/experiments/ppo_market_v1")
-
-    env.close()
-    print("✅ Training complete and model saved.")
+def main(argv: list[str] | None = None) -> int:
+    project_root = Path(__file__).resolve().parents[2]
+    train_py = project_root / "train.py"
+    cmd = [sys.executable, str(train_py)]
+    if argv is None:
+        cmd.extend(sys.argv[1:])
+    else:
+        cmd.extend(argv)
+    return subprocess.call(cmd)
 
 
 if __name__ == "__main__":
-    train()
+    raise SystemExit(main())

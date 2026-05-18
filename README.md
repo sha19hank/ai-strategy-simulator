@@ -1,214 +1,85 @@
 # AI Strategy Simulator
 
-**Computational Economics Platform for Emergent Competitive Strategy in Oligopolistic Markets**
+Research-grade reinforcement learning + economic simulation for studying **emergent competitive strategy** in a regulated, innovation-driven **3-firm oligopoly**.
 
-## Project Vision
+## What problem this solves
+- Gives a controllable simulation environment where firms learn pricing + innovation strategy under:
+  - demand elasticity
+  - cost shocks
+  - economic regimes (boom/recession)
+  - substitutes pressure
+- Produces **reproducible experiments** (seeded training + seeded evaluation) with artifacts you can audit and visualize.
 
-We are building a research-grade multi-agent reinforcement learning (MARL) system to study how autonomous firms learn competitive strategy in regulated, innovation-driven markets.
+## Key features
+- Multi-agent market simulation (PettingZoo ParallelEnv)
+- Reproducible training (`train.py`, CPU-only)
+- End-to-end experiment runner (`run_experiment.py`)
+- Tournament evaluation (`version1/agents/eval_tournament.py`)
+- Streamlit dashboard (`dashboard/app.py`)
+- Environment sanity + robustness test suite (`tests/test_env_sanity.py`)
 
-The simulator models an oligopolistic industry (manufacturing/pharmaceutical) where 3 AI-controlled players compete on **price** and **innovation (R&D)**, subject to **cost structure**, **regulation**, and **market dynamics**.
+## Quick start
 
-**Research Goal:** Understand emergent pricing equilibria, innovation races, market concentration, and strategic retaliation in computational economies.
+From repo root:
 
----
-
-## Architecture Overview
-
-```
-MarketEnvMultiV1 (PettingZoo ParallelEnv)
-    ↓
-3 Independent PPO Agents (Stable-Baselines3)
-    ↓
-Self-Play Learning Loop
-    ↓
-Tournament Evaluation
-    ↓
-Dashboard Visualization
-```
-
-- **Environment:** Fully specified oligopoly market with exogenous shocks
-- **Learning:** True multi-agent self-play (no single-agent shortcuts)
-- **Outcomes:** Emergent behavior (we observe, don't prescribe)
-- **Research:** Publication-ready analysis pipeline
-
----
-
-## Version 1: Foundation (Complete)
-
-**Status:** ✅ Training validated, economics calibrated, ready for dashboard
-
-**Deliverable:**
-- ✅ Clean multi-agent market environment (MarketEnvMultiV1)
-- ✅ Self-play PPO training (1M timesteps)
-- ✅ Evaluation + tournament system (10 episodes × 200 steps)
-- ✅ Economic simulation (200 steps = 50 years)
-- ✅ Analysis pipeline with price war detection
-
-**Economics:**
-- Profit maximization: `π_i = P_i·Q_i − C_m·Q_i − k·(R&D)² − C_capital − C_compliance`
-- Market share: Softmax competition (α=0.05 price sensitivity, β=1.5 innovation power)
-- Regulation: Price cap ($250), compliance cost
-- Shocks: Markov economic cycles, supplier volatility, substitute pressure
-- Innovation: Stock accumulation with quadratic cost, diminishing returns
-
-**Latest Results (Jan 24, 2026):**
-- Innovation leader emerged: 72% market share, $8,817 profit
-- Realistic monopolization via R&D investment
-- Perfect price coordination at $82 (implicit collusion)
-- HHI = 0.37 (high concentration, matches real pharma/tech markets)
-
-**See:** `docs/ECONOMICS.md` for full specification
-
----
-
-## Version 2: Extensions (Future)
-
-**Planned additions:**
-- Human-AI competitive play (twin-agent system)
-- Bankruptcy mechanics (firm exit)
-- Market entry (firm injection)
-- Real data calibration
-- Policy analysis
-
----
-
-## Project Structure
-
-```
-ai-strategy-simulator/
-├── README.md                              (this file)
-├── DEVELOPMENT_LOG.md                     (progress tracking)
-├── requirements.txt                       (dependencies)
-├── docs/
-│   └── ECONOMICS.md                       (economic specification)
-├── core/
-│   └── models/                            (core economic functions)
-├── version1/
-│   ├── env/
-│   │   ├── market_env_multi_v1.py         (clean MARL environment)
-│   │   └── v1_wrappers.py                 (SB3 integration)
-│   ├── agents/
-│   │   ├── train_marl.py                  (self-play training)
-│   │   ├── eval_tournament.py             (evaluation)
-│   │   └── agent_utils.py
-│   ├── experiments/
-│   │   ├── logs/                          (training logs)
-│   │   └── models/                        (trained agents)
-│   └── tests/
-│       └── test_market_env.py
-└── version2/
-    ├── twin_env/                          (human-AI environment)
-    ├── agents/                            (competitive agents)
-    └── tests/
-```
-
----
-
-## Quick Start
-
-### 1. Install Dependencies
 ```bash
-pip install -r requirements.txt
-```
-
-### 2. Run Tests
-```bash
-pytest version1/tests/ -v
-```
-
-### 3. Train Agents (Self-Play)
-```bash
-python -m version1.agents.train_marl
-```
-
-### 4. Evaluate & Analyze
-```bash
-python -m version1.agents.eval_tournament
-```
-
-### 5. View Results
-```bash
+pip install -r requirements-dev.txt
+python run_experiment.py --timesteps 500000 --seed 123
 streamlit run dashboard/app.py
 ```
 
----
+## Example outputs
 
-## Key Features
+Running `run_experiment.py` creates:
 
-✅ **True Multi-Agent RL**
-- 3 independent PPO agents learning simultaneously
-- Self-play (agents learn from each other)
-- No centralized controller
+```
+results/
+  run_YYYYMMDD_HHMMSS/
+    models/
+      model_v1_firm_0.zip
+      model_v1_firm_1.zip
+      model_v1_firm_2.zip
+    tournament_results.csv
+    metadata.json
+```
 
-✅ **Grounded Economics**
-- Bertrand oligopoly model
-- Industrial organization theory (Porter's 5 Forces)
-- Realistic cost structure + regulation
+## Project structure (high level)
 
-✅ **Emergent Behavior**
-- Price wars (not prescribed)
-- Innovation races (not scripted)
-- Market concentration (natural outcome)
-- Strategic retaliation (learned strategy)
+```
+ai-strategy-simulator/
+├── train.py                      # canonical reproducible training
+├── run_experiment.py              # train → evaluate → save results
+├── tests/
+│   └── test_env_sanity.py         # economic + numerical robustness suite
+├── version1/
+│   ├── env/
+│   │   ├── market_env_multi_v1.py # oligopoly environment (V1)
+│   │   └── sb3_firm_env.py        # minimal SB3 wrapper for training
+│   ├── agents/
+│   │   └── eval_tournament.py     # deterministic tournament + CSV logging
+│   └── tests/
+│       └── test_market_env_multi_v1.py
+├── dashboard/
+│   └── app.py                    # streamlit dashboard
+└── docs/
+    ├── overview.md
+    ├── architecture.md
+    ├── experiment_guide.md
+    ├── environment.md
+    └── ECONOMICS.md               # full economic specification
+```
 
-✅ **Research Quality**
-- Reproducible experiments
-- Publication pipeline
-- Policy analysis capability
-- Extensible architecture
+## Running tests
 
----
-
-## Research Questions
-
-This system enables study of:
-
-1. **How do autonomous firms learn competitive strategy?**
-2. **What pricing equilibria emerge naturally?**
-3. **When do price wars occur? Why?**
-4. **How does innovation create dominance?**
-5. **What is the impact of regulation on market structure?**
-6. **How do cost shocks reshape competitive dynamics?**
-7. **Can tacit collusion emerge without coordination?**
-8. **How does market concentration evolve over time?**
-
----
+```bash
+python -m pytest -q version1/tests/test_market_env_multi_v1.py
+python -m pytest -q tests/test_env_sanity.py
+```
 
 ## Documentation
 
-- **DEVELOPMENT_LOG.md** — Progress tracking & session notes
-- **docs/ECONOMICS.md** — Full economic specification (parameters, equations, dynamics)
-- **version1/tests/** — Environment validation tests
-
----
-
-## Status
-
-| Phase | Status | Notes |
-|-------|--------|-------|
-| **Economics** | ✅ Complete | Calibrated α=0.05, β=1.5, validated realistic |
-| **Environment** | ✅ Complete | MarketEnvMultiV1, 14/14 tests passing |
-| **Training** | ✅ Complete | 1M-step self-play, monopolization emerged |
-| **Evaluation** | ✅ Complete | Tournament analysis with price war detection |
-| **Dashboard** | 🔨 Next | Update to MarketEnvMultiV1 API |
-| **Research** | ⏳ Ready | Publication-ready economics, awaiting viz |
-
----
-
-## Contact & Attribution
-
-**Project Lead:** Computational Economics Research
-
-**Framework Stack:**
-- PettingZoo (multi-agent environment)
-- Stable-Baselines3 (PPO algorithm)
-- Streamlit (visualization)
-- NumPy/SciPy (computation)
-
----
-
-**Last Updated:** January 24, 2026
-
-**Latest:** Economic calibration complete, training validated, monopolization realistic
-
-**Next Build:** Dashboard visualization for tournament results
+- Start here: `docs/overview.md`
+- How to run experiments: `docs/experiment_guide.md`
+- System layout: `docs/architecture.md`
+- Environment economics + constraints: `docs/environment.md`
+- Full model spec: `docs/ECONOMICS.md`

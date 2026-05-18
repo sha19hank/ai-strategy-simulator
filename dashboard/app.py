@@ -99,8 +99,7 @@ if not st.session_state.data_loaded:
     
     To generate new results, run training first:
     ```bash
-    python version1/quick_train.py
-    python version1/agents/eval_tournament.py
+    python run_experiment.py --timesteps 500000 --seed 123
     ```
     """)
     run_clicked = controls.render_run_button()
@@ -114,12 +113,12 @@ if not st.session_state.data_loaded:
                 st.error(f"""
                 ❌ **No tournament data found!**
                 
-                Expected path: `{sidebar_state['config']['data_path']}/tournament_results.csv`
+                Expected path (preferred): `results/run_*/tournament_results.csv`
+                Fallback (legacy): `{sidebar_state['config']['data_path']}/tournament_results.csv`
                 
                 Please run training and evaluation first:
                 ```bash
-                python version1/quick_train.py
-                python version1/agents/eval_tournament.py
+                python run_experiment.py --timesteps 500000 --seed 123
                 ```
                 """)
             else:
